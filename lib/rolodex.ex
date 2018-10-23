@@ -80,9 +80,6 @@ defmodule Rolodex do
     %{page | path: "#{host}/" <> Enum.join(path_info, "/")}
   end
 
-  # defp last_page_url(path, conn.params, %{page: last_page, limit: limit}) do
-  # end
-
   defp first_page_url(%Page{total: total, limit: limit} = page) when total <= limit, do: page
 
   defp first_page_url(%Page{} = page), do: %{page | first_page_url: page_url(page, 1)}
@@ -162,9 +159,5 @@ defmodule Rolodex do
           _ -> %{page | current_page: 1}
         end
     end
-  end
-
-  def total(query, repo) do
-    repo.aggregate(query, :count, :id)
   end
 end
