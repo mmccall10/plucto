@@ -36,7 +36,7 @@ defmodule Rolodex do
     |> offset()
     |> paged_query(query)
     |> data()
-    |> total()
+    |> total(query)
     |> make_path()
     |> get_from()
     |> get_to()
@@ -47,7 +47,7 @@ defmodule Rolodex do
     |> prev_page_url()
   end
 
-  defp total(%Page{query: query, repo: repo} = page) do
+  defp total(%Page{repo: repo} = page, query) do
     %{page | total: repo.aggregate(query, :count, :id)}
   end
 
