@@ -121,7 +121,7 @@ defmodule Rolodex do
       |> Map.merge(params_map)
       |> URI.encode_query()
 
-    "#{path}?" <> query_string
+    "//#{path}?" <> query_string
   end
 
   defp last_page(%Page{total: total, limit: limit} = page) when total < limit, do: page
