@@ -1,12 +1,10 @@
 # Rolodex
 
-W.I.P
-
-Rolodex is a light weight unobtrusive pagination helper for elixir/phoenix web applications.
+Rolodex is a light weight unobtrusive pagination helper for elixir/phoenix(plug) web applications.
 Rolodex is a simple library for asbtracting common pagination functionality.
 Rolodex is intended to work with Plug and Ecto. It requires a conn struct, ecto query, and an ecto repo.
 
-You might be familiar with generated context functions such as this:
+You might be familiar with query calls such as this:
 ```elixir
   %User{} |> Repo.all()
 ```
