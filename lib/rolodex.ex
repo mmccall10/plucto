@@ -24,11 +24,11 @@ defmodule Rolodex do
   """
 
   def flip(query, %Conn{} = conn, repo) do
+    conn = Plug.Conn.fetch_query_params(conn)
+
     %Page{
       params: conn.params,
       path_info: conn.path_info,
-      port: conn.port,
-      host: conn.host,
       repo: repo
     }
     |> current_page()
@@ -37,14 +37,9 @@ defmodule Rolodex do
     |> paged_query(query)
     |> data()
     |> total(query)
-    |> make_path()
     |> get_from()
     |> get_to()
     |> last_page()
-    |> first_page_url()
-    |> last_page_url()
-    |> next_page_url()
-    |> prev_page_url()
   end
 
   defp total(%Page{repo: repo} = page, query) do
@@ -56,8 +51,7 @@ defmodule Rolodex do
   end
 
   defp paged_query(%Page{limit: limit, offset: offset} = page, %Ecto.Query{} = query) do
-    q = from(q in query, limit: ^limit, offset: ^offset)
-    %{page | query: q}
+    %{page | query: from(q in query, limit: ^limit, offset: ^offset)}
   end
 
   defp get_from(%Page{total: total} = page) when total == 0, do: page
@@ -68,61 +62,6 @@ defmodule Rolodex do
 
   defp get_to(%Page{offset: offset, data: data} = page),
     do: %{page | to: offset + Enum.count(data)}
-
-  defp make_path(%Page{port: port, host: host, path_info: path_info} = page) do
-    host =
-      case port do
-        80 -> host
-        443 -> host
-        _ -> "#{host}:#{port}"
-      end
-
-    %{page | path: "#{host}/" <> Enum.join(path_info, "/")}
-  end
-
-  defp first_page_url(%Page{total: total, limit: limit} = page) when total <= limit, do: page
-
-  defp first_page_url(%Page{} = page), do: %{page | first_page_url: page_url(page, 1)}
-
-  defp last_page_url(%Page{total: total, last_page: last_page, limit: limit} = page)
-       when total <= limit or is_nil(last_page),
-       do: page
-
-  defp last_page_url(%Page{last_page: last_page} = page),
-    do: %{page | last_page_url: page_url(page, last_page)}
-
-  defp next_page_url(
-         %Page{current_page: current_page, last_page: last_page, total: total, limit: limit} =
-           page
-       )
-       when total <= limit or current_page == last_page,
-       do: page
-
-  defp next_page_url(%Page{current_page: current_page} = page),
-    do: %{page | next_page_url: page_url(page, current_page + 1)}
-
-  defp prev_page_url(%Page{current_page: current_page, total: total, limit: limit} = page)
-       when total <= limit or current_page == 1,
-       do: page
-
-  defp prev_page_url(%Page{current_page: current_page} = page) do
-    %{page | prev_page_url: page_url(page, current_page - 1)}
-  end
-
-  defp page_url(%Page{path: path, params: params, limit: limit}, page_num) do
-    params_map =
-      case params["limit"] do
-        nil -> %{"page" => page_num}
-        _ -> %{"page" => page_num, "limit" => limit}
-      end
-
-    query_string =
-      params
-      |> Map.merge(params_map)
-      |> URI.encode_query()
-
-    "//#{path}?" <> query_string
-  end
 
   defp last_page(%Page{total: total, limit: limit} = page) when total < limit, do: page
 

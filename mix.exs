@@ -28,16 +28,15 @@ defmodule Rolodex.MixProject do
     [
       {:ecto_sql, "~> 3.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:postgrex, "0.14.1", only: :test}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+      {:postgrex, "0.14.1", only: :test},
+      {:faker, "~> 0.11", only: :test}
     ]
   end
 
   defp aliases do
     [
       # Ensures database is reset before tests are run
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      # test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end
