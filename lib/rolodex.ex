@@ -15,7 +15,7 @@ defmodule Rolodex do
     from(u in User) |> Rolodex.flip(conn, Repo)
 
   Why the conn struct? Rolodex at this time is a configuration free library. It gets all the informaion it needs using the url.
-  The only two parameter that matter are page and limit. Neither are required to initial a paginated response. Rolodex will default to page 1 and a limit of 10.
+  The only two parameter that matter are page and limit. Neither are required to initial a paginated response. Rolodex will default to page 1 and a limit of 25.
 
   Consider a page that list users, we will use the url www.officeadmin.com/users
   www.officeadmin.com/users is a paginatable route due to the defaults.
