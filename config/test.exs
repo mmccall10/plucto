@@ -3,7 +3,7 @@ config :rolodex, ecto_repos: [Rolodex.Repo]
 
 # Test Repo settings
 config :rolodex, Rolodex.Repo,
-  username: "root",
+  username: "postgres",
   password: "",
   database: "rolodex_test",
   hostname: "localhost",
