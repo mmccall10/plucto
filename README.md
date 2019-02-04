@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/pyramind10/rolodex.svg?style=svg)](https://circleci.com/gh/pyramind10/rolodex)
 # Rolodex
 
 Rolodex is a light weight unobtrusive pagination helper for elixir/phoenix(plug) web applications.
