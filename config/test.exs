@@ -1,11 +1,11 @@
 use Mix.Config
-config :rolodex, ecto_repos: [Rolodex.Repo]
+config :plucto, ecto_repos: [Plucto.Repo]
 
 # Test Repo settings
-config :rolodex, Rolodex.Repo,
+config :plucto, Plucto.Repo,
   username: "postgres",
   password: "",
-  database: "rolodex_test",
+  database: "Plucto_test",
   hostname: "localhost",
   poolsize: 10,
   # Ensure async testing is possible:

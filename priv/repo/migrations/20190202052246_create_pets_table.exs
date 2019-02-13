@@ -1,4 +1,4 @@
-defmodule Rolodex.Repo.Migrations.CreatePetsTable do
+defmodule Plucto.Repo.Migrations.CreatePetsTable do
   use Ecto.Migration
 
   def change do

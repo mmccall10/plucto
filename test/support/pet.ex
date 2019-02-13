@@ -1,4 +1,4 @@
-defmodule Rolodex.Pet do
+defmodule Plucto.Pet do
   use Ecto.Schema
   import Ecto.Changeset
 

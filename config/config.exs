@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :rolodex, key: :value
+#     config :plucto, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:rolodex, :key)
+#     Application.get_env(:plucto, :key)
 #
 # You can also configure a 3rd-party app:
 #

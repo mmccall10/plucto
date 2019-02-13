@@ -1,3 +1,3 @@
-defmodule Rolodex.Repo do
-  use Ecto.Repo, otp_app: :rolodex, adapter: Ecto.Adapters.Postgres
+defmodule Plucto.Repo do
+  use Ecto.Repo, otp_app: :plucto, adapter: Ecto.Adapters.Postgres
 end

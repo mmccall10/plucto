@@ -1,4 +1,4 @@
-defmodule Rolodex.Page do
+defmodule Plucto.Page do
   @moduledoc false
 
   defstruct params: %{},
