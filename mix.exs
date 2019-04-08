@@ -13,7 +13,8 @@ defmodule Plucto.MixProject do
       name: "Plucto",
       description: description(),
       source_url: "https://github.com/pyramind10/plucto",
-      package: package()
+      package: package(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -34,7 +35,9 @@ defmodule Plucto.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, "0.14.1", only: :test},
       {:faker, "~> 0.11", only: :test},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:excoveralls, "0.10.6", only: :test},
+      {:credo, "1.0.4", only: :test}
     ]
   end
 

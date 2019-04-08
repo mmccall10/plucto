@@ -1,5 +1,5 @@
 defmodule PluctoTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   use Plug.Test
   doctest Plucto
   import Ecto.Query
@@ -75,5 +75,55 @@ defmodule PluctoTest do
 
     assert %Page{current_page: 3, offset: 10, limit: 5, last_page: 10} =
              Plucto.flip(query, conn, Repo)
+  end
+
+  test "context/2 returns plucto page" do
+    conn = conn(:get, "/pets?limit=5&page=2")
+    query = from(p in Pet)
+
+    assert %Page{limit: 5, offset: 5, current_page: 2, params: %{"limit" => "5", "page" => "2"}} =
+             Plucto.context(conn)
+  end
+
+  test "flip/2 with %Plucto.Page{} from context/2 returns %Plucto.Page{} with results" do
+    conn = conn(:get, "/pets?limit=6&page=2")
+    query = from(p in Pet)
+    results = conn |> Plucto.context() |> Plucto.flip(query, Repo)
+
+    assert %Page{
+             current_page: 2,
+             from: 7,
+             last_page: 9,
+             limit: 6,
+             offset: 6,
+             params: %{"limit" => "6", "page" => "2"},
+             path_info: ["pets"],
+             query: %Ecto.Query{},
+             repo: Plucto.Repo,
+             to: 12,
+             total: 50
+           } = results
+  end
+
+  test "no repo raises Plucto.MissingRepoException" do
+    conn = conn(:get, "/pets?limit=5&page=3")
+    query = from(p in Pet)
+
+    assert_raise Plucto.MissingRepoException, fn ->
+      Plucto.flip(query, conn)
+    end
+  end
+
+  test "check application config for repo" do
+    Application.put_env(:plucto, :repo, Plucto.Repo)
+
+    conn = conn(:get, "/pets?limit=5&page=3")
+    query = from(p in Pet)
+    page = conn |> Plucto.context() |> Plucto.flip(query)
+
+    # reset env
+    Application.put_env(:plucto, :repo, nil)
+
+    assert %Page{repo: Plucto.Repo} = page
   end
 end

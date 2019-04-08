@@ -9,12 +9,12 @@ defmodule Plucto do
   Plucto is intended to work with Plug and Ecto. It requires a conn struct, ecto query, and ecto repo.
 
   You might be familiar with generated context functions such as this:
-    %User{} |> Repo.all()
+    User |> Repo.all()
 
     To write this using Plucto you would do:
     from(u in User) |> Plucto.flip(conn, Repo)
 
-  Why the conn struct? Plucto at this time is a configuration free library. It gets all the informaion it needs using the url.
+  Why the conn struct? Plucto is a configuration free library. It gets all the informaion it needs using the url.
   The only two parameter that matter are page and limit. Neither are required to initial a paginated response. Plucto will default to page 1 and a limit of 25.
 
   Consider a page that list users, we will use the url www.officeadmin.com/users
@@ -23,17 +23,49 @@ defmodule Plucto do
 
   """
 
-  def flip(query, %Conn{} = conn, repo) do
+  def flip(page_or_query, query_or_conn, repo \\ nil)
+
+  def flip(%Page{} = page, %Ecto.Query{} = query, repo) do
+    page
+    |> get_repo(repo)
+    |> do_paginate(query)
+  end
+
+  def flip(%Ecto.Query{} = query, %Conn{} = conn, repo) do
+    conn
+    |> page_from_conn()
+    |> get_repo(repo)
+    |> do_paginate(query)
+  end
+
+  def context(%Conn{} = conn) do
+    page_from_conn(conn)
+  end
+
+  defp page_from_conn(conn) do
     conn = Plug.Conn.fetch_query_params(conn)
 
     %Page{
       params: conn.params,
-      path_info: conn.path_info,
-      repo: repo
+      path_info: conn.path_info
     }
     |> current_page()
     |> limit()
     |> offset()
+  end
+
+  defp get_repo(%Page{} = page, repo) do
+    maybe_config_repo = repo || Application.get_env(:plucto, :repo)
+
+    if is_nil(maybe_config_repo) do
+      raise Plucto.MissingRepoException
+    else
+      %{page | repo: maybe_config_repo}
+    end
+  end
+
+  defp do_paginate(%Page{} = page, query) do
+    page
     |> paged_query(query)
     |> data()
     |> total(query)
