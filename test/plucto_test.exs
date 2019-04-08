@@ -1,5 +1,5 @@
 defmodule PluctoTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   use Plug.Test
   doctest Plucto
   import Ecto.Query
@@ -116,9 +116,13 @@ defmodule PluctoTest do
 
   test "check application config for repo" do
     Application.put_env(:plucto, :repo, Plucto.Repo)
+
     conn = conn(:get, "/pets?limit=5&page=3")
     query = from(p in Pet)
     page = conn |> Plucto.context() |> Plucto.flip(query)
+
+    # reset env
+    Application.put_env(:plucto, :repo, nil)
 
     assert %Page{repo: Plucto.Repo} = page
   end
