@@ -5,12 +5,12 @@ defmodule Plucto.Page do
             repo: nil,
             query: nil,
             path_info: [],
-            total: nil,
+            total: 0,
             limit: 25,
-            offset: nil,
-            current_page: nil,
+            offset: 0,
+            current_page: 1,
             last_page: nil,
-            from: nil,
-            to: nil,
+            from: 0,
+            to: 0,
             data: []
 end
