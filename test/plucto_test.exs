@@ -87,8 +87,7 @@ defmodule PluctoTest do
 
   test "flip/2 with %Plucto.Page{} from context/2 returns %Plucto.Page{} with results" do
     conn = conn(:get, "/pets?limit=6&page=2")
-    query = from(p in Pet)
-    results = conn |> Plucto.context() |> Plucto.flip(query, Repo)
+    query = results = from(p in Pet) |> Plucto.flip(Plucto.context(conn), Repo)
 
     assert %Page{
              current_page: 2,
@@ -118,8 +117,8 @@ defmodule PluctoTest do
     Application.put_env(:plucto, :repo, Plucto.Repo)
 
     conn = conn(:get, "/pets?limit=5&page=3")
-    query = from(p in Pet)
-    page = conn |> Plucto.context() |> Plucto.flip(query)
+    page_context = Plucto.context(conn)
+    page = from(p in Pet) |> Plucto.flip(page_context)
 
     # reset env
     Application.put_env(:plucto, :repo, nil)

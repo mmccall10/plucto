@@ -23,9 +23,9 @@ defmodule Plucto do
 
   """
 
-  def flip(page_or_query, query_or_conn, repo \\ nil)
+  def flip(query, page_or_conn, repo \\ nil)
 
-  def flip(%Page{} = page, %Ecto.Query{} = query, repo) do
+  def flip(%Ecto.Query{} = query, %Page{} = page, repo) do
     page
     |> get_repo(repo)
     |> do_paginate(query)
