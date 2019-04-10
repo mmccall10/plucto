@@ -142,7 +142,7 @@ defmodule PluctoTest do
     query = from(p in Pet)
     page = Plucto.flip(query, conn, Repo)
 
-    range = Plucto.Helpers.range(page)
+    range = Plucto.Helpers.range(page, 2)
 
     assert 1..6 = range
   end

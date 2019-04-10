@@ -80,8 +80,8 @@ defmodule Plucto.Helpers do
   def range(%Page{} = page, padding \\ 3) do
     {left_pad, right_pad} = offset_adjustment(page, padding)
 
-    first.._ = left_range(page, padding + left_pad)
-    _..last = right_range(page, padding + right_pad)
+    first.._ = left_range(page, left_pad)
+    _..last = right_range(page, right_pad)
     first..last
   end
 
@@ -90,7 +90,7 @@ defmodule Plucto.Helpers do
 
     add_to_right =
       if offset_left < 0 do
-        abs(offset_left)
+        padding + abs(offset_left)
       else
         0
       end
@@ -99,12 +99,12 @@ defmodule Plucto.Helpers do
 
     add_to_left =
       if offset_right < 0 do
-        abs(offset_right)
+        padding + abs(offset_right)
       else
         0
       end
 
-    {add_to_left, add_to_right}
+    IO.inspect({add_to_left, add_to_right})
   end
 
   def left_range(%Page{current_page: current_page, last_page: last_page}, padding \\ 3) do
