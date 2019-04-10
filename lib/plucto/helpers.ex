@@ -8,7 +8,7 @@ defmodule Plucto.Helpers do
     first..last
   end
 
-  def left_range(%Page{current_page: current_page}, padding \\ 3) do
+  def left_range(%Page{current_page: current_page, last_page: last_page}, padding \\ 3) do
     if current_page <= 1 do
       1..1
     else
@@ -17,7 +17,11 @@ defmodule Plucto.Helpers do
       if offset_left < 1 do
         1..(current_page - 1)
       else
-        offset_left..(current_page - 1)
+        if offset_left > last_page do
+          (last_page - padding)..(last_page - 1)
+        else
+          offset_left..(current_page - 1)
+        end
       end
     end
   end

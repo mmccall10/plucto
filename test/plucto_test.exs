@@ -137,13 +137,14 @@ defmodule PluctoTest do
   end
 
   test "range/2 returns full range from left pad start to right pad end" do
-    conn = conn(:get, "/pets?page=1&limit=5")
+    conn = conn(:get, "/pets?page=2&limit=5")
+
     query = from(p in Pet)
     page = Plucto.flip(query, conn, Repo)
 
     range = Plucto.Helpers.range(page)
 
-    assert 1..4 = range
+    assert 1..5 = range
   end
 
   test "left_range/2 return proper range" do
@@ -184,5 +185,45 @@ defmodule PluctoTest do
     range = Plucto.Helpers.left_range(page)
 
     assert 1..1 = range
+  end
+
+  test "left_range/2 does not go beyond last page" do
+    conn = conn(:get, "/pets?page=120&limit=5")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    range = Plucto.Helpers.left_range(page)
+
+    assert 7..9 = range
+  end
+
+  test "right_range/2 does not go beyond first page" do
+    conn = conn(:get, "/pets?page=2&limit=25")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    range = Plucto.Helpers.right_range(page)
+
+    assert 2..2 = range
+  end
+
+  test "right_range/2 accepts padding" do
+    conn = conn(:get, "/pets?page=5&limit=1")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    range = Plucto.Helpers.right_range(page, 10)
+
+    assert 6..15 = range
+  end
+
+  test "left_range/2 accepts padding" do
+    conn = conn(:get, "/pets?page=10&limit=1")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    range = Plucto.Helpers.left_range(page, 10)
+
+    assert 1..9 = range
   end
 end
