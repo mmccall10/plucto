@@ -95,11 +95,11 @@ defmodule Plucto.Helpers do
         0
       end
 
-    offset_right = current_page + padding
+    offset_right = last_page - (current_page + padding)
 
     add_to_left =
-      if offset_right > last_page do
-        offset_right - last_page
+      if offset_right < 0 do
+        abs(offset_right)
       else
         0
       end
