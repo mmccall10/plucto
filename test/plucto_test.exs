@@ -226,4 +226,44 @@ defmodule PluctoTest do
 
     assert 1..9 = range
   end
+
+  test "next/2 returns proper uri" do
+    conn = conn(:get, "/pets?page=5&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    next_uri = Plucto.Helpers.next(page, conn)
+
+    assert "/pets?limit=5&page=6&q=Black+Dog" = next_uri
+  end
+
+  test "previous/2 returns proper uri" do
+    conn = conn(:get, "/pets?page=5&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    next_uri = Plucto.Helpers.previous(page, conn)
+
+    assert "/pets?limit=5&page=4&q=Black+Dog" = next_uri
+  end
+
+  test "last/2 returns proper uri" do
+    conn = conn(:get, "/pets?page=5&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.last(page, conn)
+
+    assert "/pets?limit=5&page=10&q=Black+Dog" = last_uri
+  end
+
+  test "first/2 returns proper uri" do
+    conn = conn(:get, "/pets?page=5&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.first(page, conn)
+
+    assert "/pets?limit=5&page=1&q=Black+Dog" = last_uri
+  end
 end
