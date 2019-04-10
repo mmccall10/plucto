@@ -144,7 +144,7 @@ defmodule PluctoTest do
 
     range = Plucto.Helpers.range(page)
 
-    assert 1..6 = range
+    assert 1..7 = range
   end
 
   test "left_range/2 return proper range" do
@@ -318,13 +318,13 @@ defmodule PluctoTest do
   end
 
   test "offset_adjustment/2 appends difference to eithe side" do
-    conn = conn(:get, "/pets?page=50&limit=1")
+    conn = conn(:get, "/pets?page=1&limit=1")
 
     query = from(p in Pet)
     page = Plucto.flip(query, conn, Repo)
 
     range = Plucto.Helpers.offset_adjustment(page, 3)
 
-    assert {6, 3} = range
+    assert {3, 6} = range
   end
 end

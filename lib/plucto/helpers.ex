@@ -87,20 +87,18 @@ defmodule Plucto.Helpers do
 
   @doc false
   def offset_adjustment(%Page{current_page: current_page, last_page: last_page}, padding) do
-    offset_left = current_page - padding
-
     add_to_right =
-      if offset_left < 0 do
-        padding + abs(offset_left)
+      if current_page <= padding do
+        padding + (padding - current_page) + 1
       else
         padding
       end
 
-    offset_right = current_page + padding
+    right_offset = current_page + padding
 
     add_to_left =
-      if offset_right > last_page do
-        padding + (offset_right - last_page)
+      if last_page <= right_offset do
+        padding + (right_offset - last_page)
       else
         padding
       end
