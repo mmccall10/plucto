@@ -137,12 +137,12 @@ defmodule PluctoTest do
   end
 
   test "range/2 returns full range from left pad start to right pad end" do
-    conn = conn(:get, "/pets?page=1&limit=1")
+    conn = conn(:get, "/pets?page=2&limit=1")
 
     query = from(p in Pet)
     page = Plucto.flip(query, conn, Repo)
 
-    range = Plucto.Helpers.range(page, 2)
+    range = Plucto.Helpers.range(page)
 
     assert 1..6 = range
   end
@@ -315,5 +315,16 @@ defmodule PluctoTest do
     last_uri = Plucto.Helpers.previous(page, conn)
 
     assert "/pets?limit=5&page=1&q=Black+Dog" = last_uri
+  end
+
+  test "offset_adjustment/2 appends difference to eithe side" do
+    conn = conn(:get, "/pets?page=50&limit=1")
+
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    range = Plucto.Helpers.offset_adjustment(page, 3)
+
+    assert {6, 3} = range
   end
 end
