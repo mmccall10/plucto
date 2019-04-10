@@ -133,7 +133,7 @@ defmodule PluctoTest do
 
     range = Plucto.Helpers.range(page, 5)
 
-    assert 1..5 = range
+    assert 36..46 = range
   end
 
   test "range/2 returns full range from left pad start to right pad end" do
