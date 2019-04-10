@@ -138,6 +138,7 @@ defmodule PluctoTest do
 
   test "range/2 returns full range from left pad start to right pad end" do
     conn = conn(:get, "/pets?page=2&limit=5")
+
     query = from(p in Pet)
     page = Plucto.flip(query, conn, Repo)
 
