@@ -266,4 +266,54 @@ defmodule PluctoTest do
 
     assert "/pets?limit=5&page=1&q=Black+Dog" = last_uri
   end
+
+  test "page_url/2 sets page to 1 if no page is set" do
+    conn = conn(:get, "/pets?page=5&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.first(page, conn)
+
+    assert "/pets?limit=5&page=1&q=Black+Dog" = last_uri
+  end
+
+  test "page_url/2 works without page url parameter" do
+    conn = conn(:get, "/pets?q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.page_url(2, page, conn)
+
+    assert "/pets?page=2&q=Black+Dog" = last_uri
+  end
+
+  test "next/2 works without page url parameter" do
+    conn = conn(:get, "/pets?q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.next(page, conn)
+
+    assert "/pets?page=2&q=Black+Dog" = last_uri
+  end
+
+  test "next/2 won't gen url beyond last page" do
+    conn = conn(:get, "/pets?page=150&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.next(page, conn)
+
+    assert "/pets?limit=5&page=10&q=Black+Dog" = last_uri
+  end
+
+  test "previous/2 won't gen url beyond page 1" do
+    conn = conn(:get, "/pets?page=1&limit=5&q=Black Dog")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    last_uri = Plucto.Helpers.previous(page, conn)
+
+    assert "/pets?limit=5&page=1&q=Black+Dog" = last_uri
+  end
 end

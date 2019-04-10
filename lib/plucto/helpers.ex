@@ -7,7 +7,7 @@ defmodule Plucto.Helpers do
         %Plug.Conn{host: host, scheme: scheme, request_path: req_path},
         opts \\ []
       ) do
-    query = %{params | "page" => page_num} |> URI.encode_query()
+    query = Map.put(params, "page", page_num) |> URI.encode_query()
     path = "#{req_path}?#{query}"
 
     case Keyword.get(opts, :host, false) do
@@ -17,14 +17,20 @@ defmodule Plucto.Helpers do
   end
 
   def next(
-        %Page{params: params} = page,
+        %Page{params: params, last_page: last_page} = page,
         %Plug.Conn{} = conn,
         opts \\ []
       ) do
-    {page_num, _} = Integer.parse(params["page"])
+    param_page = page_from_params(params)
 
-    (page_num + 1)
-    |> page_url(page, conn, opts)
+    page_num =
+      if param_page >= last_page do
+        last_page
+      else
+        param_page + 1
+      end
+
+    page_url(page_num, page, conn, opts)
   end
 
   def previous(
@@ -32,10 +38,16 @@ defmodule Plucto.Helpers do
         %Plug.Conn{} = conn,
         opts \\ []
       ) do
-    {page_num, _} = Integer.parse(params["page"])
+    param_page = page_from_params(params)
 
-    (page_num - 1)
-    |> page_url(page, conn, opts)
+    page_num =
+      if param_page <= 1 do
+        1
+      else
+        param_page - 1
+      end
+
+    page_url(page_num, page, conn, opts)
   end
 
   def last(
@@ -52,6 +64,17 @@ defmodule Plucto.Helpers do
         opts \\ []
       ) do
     page_url(1, page, conn, opts)
+  end
+
+  defp page_from_params(params) do
+    case params["page"] do
+      nil ->
+        1
+
+      page ->
+        {page_num, _} = Integer.parse(page)
+        page_num
+    end
   end
 
   def range(%Page{} = page, padding \\ 3) do
