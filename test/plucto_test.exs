@@ -126,14 +126,24 @@ defmodule PluctoTest do
     assert %Page{repo: Plucto.Repo} = page
   end
 
-  test "range/2 returned properly map of left/right ranges" do
+  test "range/2 returned full range" do
     conn = conn(:get, "/pets?page=4&limit=5")
     query = from(p in Pet)
     page = Plucto.flip(query, conn, Repo)
 
     range = Plucto.Helpers.range(page)
 
-    assert %{left: 1..3, right: 5..7} = range
+    assert 1..7 = range
+  end
+
+  test "range/2 returns full range from left pad start to right pad end" do
+    conn = conn(:get, "/pets?page=1&limit=5")
+    query = from(p in Pet)
+    page = Plucto.flip(query, conn, Repo)
+
+    range = Plucto.Helpers.range(page)
+
+    assert 1..4 = range
   end
 
   test "left_range/2 return proper range" do
